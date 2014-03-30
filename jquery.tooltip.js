@@ -1,60 +1,17 @@
 
-/*
-
-OVERVIEW
-========
-Tooltip plugin which allows for the separation of treatment of desktop and mobile.
-
-
-REQUIREMENTS
-============
-
-Requires John Resig's Micro Templating function - http://ejohn.org/blog/javascript-micro-templating/
-
-The options ismobile and istouch require mobile user agent detection and touch event feature detection not included in this script.
-
-
-OPTIONS
-=======
-The following options are available
-
-actionTouch : 'click' - Tooltip trigger event for douch divices.
-actionDesktop : 'hover' - Tooltip trigger event for desktop.
-contentSrc : 'text' - Content source can be text, html, title or alt.
-ttContainerClass : 'frstip' - Class(es) added to container.
-ttTargetClass : 'tip-target' - Class(es) added to target.
-ttClass : 'tt-content' - Class(es) added to the tooltip.
-tipTarget : '<a>Hint:<span class="tt-icon">&nbsp;</span></a>' - Target html.
-tpl : '<span><%=content%></span>' - Tooltip template for default and desktop.
-inheritedAttribute : false 
-offsetAboveX : 0 - Offset X for tooltip when above target.
-offsetAboveY : 0 - Offset Y for tooltip when above target.
-offsetBelowX : 0 - Offset X for tooltip when below target.
-offsetBelowY : 0 - Offset Y for tooltip when below target.
-tooltipOverlap : 20 - Adjust the tooltip position for left and right positioning relative to the trigger.
-inline : tooltip - Tooltip source is already an anchor.
-
-DEPENDENCIES
-============
-
-Relies upon the following global variables being set if option: handheld = true.
-
-
-*/
-
 (function ( $ ) {
 
-	$.fn.frstip = function ( options ) {
+	$.fn.tooltip = function ( options ) {
 
 		// Default options
-		$.fn.frstip.options = {
+		$.fn.tooltip.options = {
 			actionTouch : 'click',
 			actionDesktop : 'hover',
 			contentSrc : 'text', // text, html, title or alt
-			ttContainerClass : 'frstip',
-			ttTargetClass : 'tip-target',
-			ttClass : 'tt-content',
-			tipTarget : '<a>Hint:<span class="tt-icon">&nbsp;</span></a>',
+			ttContainerClass : 'tooltip',
+			ttTargetClass : 'tooltip-target',
+			ttClass : 'tooltip-content',
+			tipTarget : '<a>Hint:<span class="tooltip-icon">&nbsp;</span></a>',
 			tpl : '<span><%=content%></span>',
 			inheritedAttribute : false,
 			offsetAboveX : 0,
@@ -65,7 +22,7 @@ Relies upon the following global variables being set if option: handheld = true.
 		};
 
 		// Merge options
-		options = $.extend( {}, $.fn.frstip.options, options );
+		options = $.extend( {}, $.fn.tooltip.options, options );
 
 		var that = this,
 			ttNum = 0,
@@ -77,9 +34,9 @@ Relies upon the following global variables being set if option: handheld = true.
 			offsetAboveY = options.offsetAboveY,
 			offsetBelowX = options.offsetBelowX,
 			offsetBelowY = options.offsetBelowY,
-			isTouch = CR.util.isTouch();
+			isTouch = isTouch();
 
-		CR.tooltipNumcache = CR.tooltipNumcache || [];
+		this.tooltipNumcache = this.tooltipNumcache || [];
 
 		if ( isTouch ) {
 			action = options.actionTouch;
@@ -89,12 +46,12 @@ Relies upon the following global variables being set if option: handheld = true.
 
 		$( this ).each(function () {
 			
-			// Handle the caching of the tt number.
+			// Handle the caching of the tooltip number.
 			do {
 				ttNum++;
-			} while ( ttNum <= CR.tooltipNumcache );
+			} while ( ttNum <= this.tooltipNumcache );
 
-			CR.tooltipNumcache = ttNum;
+			this.tooltipNumcache = ttNum;
 
 			var tipTarget = $( options.tipTarget ),
 				tpl = '',
@@ -201,6 +158,15 @@ Relies upon the following global variables being set if option: handheld = true.
 			$('.' + ttClassSelector ).filter(':visible').css('display', 'none').parents('.frstip').removeClass('tt-open');
 		}
 
+		// Test for touch screen functionality 
+		function isTouch() {
+			if ( ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch ) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
 		function setPosition ( tgt, currentTT ) {
 			var posX = 0,
 				posY = 0,
@@ -265,4 +231,3 @@ Relies upon the following global variables being set if option: handheld = true.
 		}
 	};
 })( jQuery );
-

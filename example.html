@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    
+    <style>
+
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <div class="inner col-md-8 col-md-offset-2">
+        <h1>A responsive tooltip</h1>
+        <p>Lorem ipsum dolor sit amet, <a href="#" class='tooltip' title="This is the tooltip content.">tooltip</a> adipisicing elit. Voluptatibus, dolor, laudantium quia ipsa consequatur modi natus sapiente iure. Atque, quae quibusdam laudantium quisquam nemo repudiandae nihil porro voluptas mollitia quis.</p>
+    </div>
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+<script src="micro-templating.js"></script>
+<script src="jquery.tooltip.js"></script>
+<script>
+    // Initiate tooltips
+        $( '.tooltip' ).tooltip( {
+            contentSrc: 'title',
+            offsetAboveX : 0,
+            offsetAboveY : -3,
+            offsetBelowX : 0,
+            offsetBelowY : 6,
+            tooltipOverlap : 20,
+            tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div><span class="tri">&nbsp;</span></div>'
+        });
+</script>
+
+</body>
+</html>
