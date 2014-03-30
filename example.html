@@ -6,12 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Title</title>
 
-    <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    
-    <style>
-
-    </style>
+    <link rel="stylesheet" href="styles.css">
 
 </head>
 <body>
@@ -20,7 +16,8 @@
 
     <div class="inner col-md-8 col-md-offset-2">
         <h1>A responsive tooltip</h1>
-        <p>Lorem ipsum dolor sit amet, <a href="#" class='tooltip' title="This is the tooltip content.">tooltip</a> adipisicing elit. Voluptatibus, dolor, laudantium quia ipsa consequatur modi natus sapiente iure. Atque, quae quibusdam laudantium quisquam nemo repudiandae nihil porro voluptas mollitia quis.</p>
+        <p>This <a href="#" class='tip' title="This is the tooltip 1 content.">tooltip</a> will adapt it's display based on it's position within tha page and the available space within the browser view port, so that it always shows the tooltip in full.<p>
+        <p>You can also opt to replace the tooltip html so that an icon is inserted <a href="#" class='tt' title="This is the tooltip 2 content.">Tip</a></p>
     </div>
 
 </div>
@@ -30,15 +27,17 @@
 <script src="jquery.tooltip.js"></script>
 <script>
     // Initiate tooltips
-        $( '.tooltip' ).tooltip( {
-            contentSrc: 'title',
-            offsetAboveX : 0,
-            offsetAboveY : -3,
-            offsetBelowX : 0,
-            offsetBelowY : 6,
-            tooltipOverlap : 20,
-            tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div><span class="tri">&nbsp;</span></div>'
-        });
+    $( '.tip' ).tooltip( {
+        contentSrc: 'title',
+        tooltipOverlap : 20,
+        tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div><span class="tri">&nbsp;</span></div>'
+    });
+    $( '.tt' ).tooltip( {
+        contentSrc: 'title',
+        tooltipOverlap : 20,
+        replaceTarget: true,
+        tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div><span class="tri">&nbsp;</span></div>'
+    });
 </script>
 
 </body>

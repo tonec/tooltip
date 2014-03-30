@@ -8,10 +8,11 @@
 			actionTouch : 'click',
 			actionDesktop : 'hover',
 			contentSrc : 'text', // text, html, title or alt
-			ttContainerClass : 'tooltip',
-			ttTargetClass : 'tooltip-target',
-			ttClass : 'tooltip-content',
-			tipTarget : '<a>Hint:<span class="tooltip-icon">&nbsp;</span></a>',
+			ttContainerClass : 'tip',
+			ttTargetClass : 'tip-target',
+			ttClass : 'tip-content',
+			replacetarget: false,
+			tipTarget : '<span class="tt">?</span>',
 			tpl : '<span><%=content%></span>',
 			inheritedAttribute : false,
 			offsetAboveX : 0,
@@ -24,8 +25,7 @@
 		// Merge options
 		options = $.extend( {}, $.fn.tooltip.options, options );
 
-		var that = this,
-			ttNum = 0,
+		var ttNum = 0,
 			ttClass = options.ttClass,
 			ttTargetClassSelector = options.ttTargetClass.replace( / /g, '.' ),
 			ttClassSelector = ttClass.replace( / /g, '.' ),
@@ -34,11 +34,11 @@
 			offsetAboveY = options.offsetAboveY,
 			offsetBelowX = options.offsetBelowX,
 			offsetBelowY = options.offsetBelowY,
-			isTouch = isTouch();
+			action;
 
 		this.tooltipNumcache = this.tooltipNumcache || [];
 
-		if ( isTouch ) {
+		if ( isTouch() ) {
 			action = options.actionTouch;
 		} else {
 			action = options.actionDesktop;
@@ -58,27 +58,27 @@
 				content = {},
 				tt = '';
 
-			tipTarget.addClass( options.ttTargetClass ).attr( 'data-ti', ttNum );
+			$( this ).addClass( ttTargetClassSelector ).attr( 'data-ti', ttNum );
 			
 			tpl = '<div class="' + ttClass + '" id="tt-' + ttNum + '">' + options.tpl + '</div>';
 
 			// Get tooltip contents
 			switch ( options.contentSrc ) {
 				case 'text':
-					content[ 'content' ]	= $( this ).text();
+					content.content = $( this ).text();
 					break;
 				case 'html':
-					content[ 'content' ]	= $( this ).html();
+					content.content = $( this ).html();
 					break;
 				case 'title':
-					content[ 'content' ]	= $( this ).attr( 'title' );
+					content.content = $( this ).attr( 'title' );
 					$( this ).attr( 'title', '' );
 					break;
 				case 'alt':
-					content[ 'content' ]	= $( this ).attr( 'alt' );
+					content.content = $( this ).attr( 'alt' );
 					break;
 				default:
-					content[ 'content' ]	= $( this ).text();
+					content.content = $( this ).text();
 			}
 
 			// Generate tooltip markup using the supplied template
@@ -92,18 +92,22 @@
 			});
 
 			// Insert tooltip. 
-			$( this ).removeClass().addClass( containerClasses ).html( tipTarget );
+			$( this ).removeClass().addClass( containerClasses );
+			
+			if ( options.replaceTarget ) {
+				$( this ).html( tipTarget );
+			}
+
 			$( this ).parent().addClass( 'has-frstip' );
 			$( 'body' ).append( tt );
 			
 			// Set hide/show event types based on the given options
 			if ( action === 'hover' ) {
-				$( '.' + ttTargetClassSelector ).mouseenter( toggleOn ).mouseleave( toggleOff );
-			} 
+				$( this ).mouseenter( toggleOn ).mouseleave( toggleOff );
+			}
 
 			if ( action === 'click' ) {
-				eventType = 'click';
-				$( this ).on( eventType, toggleSwitch );
+				$( this ).on( action, toggleSwitch );
 			}
 
 			// Additional interactions that will close any open tooltips
@@ -126,7 +130,7 @@
 
 		function toggleOn ( e ) {
 			var	tgt = $( e.target ),
-				ttNum = tgt.attr( 'data-ti' ),
+				ttNum = tgt.closest( 'a[data-ti]' ).attr( 'data-ti' ),
 				currentTT = $( '#tt-' + ttNum );
 
 			e.preventDefault();
@@ -140,7 +144,7 @@
 
 		function toggleOff ( e ) {
 			var	tgt = $( e.target ),
-				ttNum = tgt.attr('data-ti'),
+				ttNum = tgt.closest( 'a[data-ti]' ).attr( 'data-ti' ),
 				currentTT = $( '#tt-' + ttNum );
 
 			e.preventDefault();
@@ -153,9 +157,15 @@
 
 		function closeAllOpen ( e ) {
 
-			if ( !$( e.target ) ) return;
+			if ( !$( e.target ) ) {
+				return;
+			}
 
-			$('.' + ttClassSelector ).filter(':visible').css('display', 'none').parents('.frstip').removeClass('tt-open');
+			$('.' + ttClassSelector )
+				.filter(':visible')
+				.css('display', 'none')
+				.parents('.frstip')
+				.removeClass('tt-open');
 		}
 
 		// Test for touch screen functionality 
@@ -224,9 +234,9 @@
 			}
 
 			// Apply these positions to the tooltip
-			var tty = currentTT.css({
+			currentTT.css({
 				'left' : posX,
-				'top' : posY	
+				'top' : posY
 			});
 		}
 	};

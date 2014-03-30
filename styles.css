@@ -1,0 +1,64 @@
+.tt {
+    display: inline-block;
+    background-color: #2A6497;
+    color: white;
+    width: 20px;
+    height; 20px;
+    border-radius: 5px;
+    text-align:center;
+}
+
+.tip-content { position: relative; max-width: 300px; }
+
+.tip-content .pod {
+	background-color: #000;
+	margin: 0 0 20px;
+	border-radius: 5px;
+	color: #fff; }
+
+.tip-content .pod .pod-inner { padding: 10px 15px 1px; }
+
+.tip-content .tri {
+	border-color: #000 transparent transparent transparent;
+	border-style: solid;
+	border-width: 20px 20px 0 20px;
+	bottom: 0;
+	display: block;
+	height: 0;
+	left: 50%;
+	margin-left: -20px;
+	pointer-events: none;
+	position: absolute;
+	width: 0;
+}
+
+.tip-content.bottom .pod { margin: 25px 0 0 0; }
+.tip-content.bottom .tri {
+	border-color: transparent transparent #000 transparent;
+	border-width: 0 20px 20px 20px;
+	top: 0;
+}
+
+.tip-content.right .tri {
+	border-color: #000 transparent transparent transparent;
+	border-width: 20px 2px 0 48px;
+	left: inherit;
+	right: 5px;
+}
+
+.tip-content.bottom.right .tri {
+	border-color: transparent transparent #000 transparent;
+	border-width: 0 2px 20px 48px;
+}
+
+.tip-content.left .tri {
+	border-color: #000 transparent transparent transparent;
+	border-width: 20px 48px 0 2px;
+	left: 30px;
+}
+
+.tip-content.bottom.left .tri {
+	border-color: transparent transparent #000 transparent;
+	border-width: 0 48px 20px 2px;
+	left: 30px;
+}
