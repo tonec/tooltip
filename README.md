@@ -29,3 +29,18 @@ The following options together with the default settings are:
 - offsetBelowX : 0 - Offset X for tooltip when below target.
 - offsetBelowY : 0 - Offset Y for tooltip when below target.
 - tooltipOverlap : 20 - Adjust the tooltip position for left and - right positioning relative to the trigger.
+
+### Example usage
+
+    $( '.tip' ).tooltip( {
+        contentSrc: 'title',
+        tooltipOverlap : 20,
+        tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div><span class="tri">&nbsp;</span></div>'
+    });
+
+    $( '.tt' ).tooltip( {
+        contentSrc: 'title',
+        tooltipOverlap : 20,
+        replaceTarget: true,
+        tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div><span class="tri">&nbsp;</span></div>'
+    });
