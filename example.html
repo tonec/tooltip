@@ -13,11 +13,48 @@
 <body>
 
 <div class="container">
-
+<!-- 
     <div class="inner col-md-8 col-md-offset-2">
         <h1>A responsive tooltip</h1>
         <p>This <a href="#" class='tip' title="This is the tooltip 1 content.">tooltip</a> will adapt it's display based on it's position within tha page and the available space within the browser view port, so that it always shows the tooltip in full.<p>
         <p>You can also opt to replace the tooltip html so that an icon is inserted <a href="#" class='tt' title="This is the tooltip 2 content.">Tip</a></p>
+    </div> -->
+
+    <div class="inner col-md-4 col-md-offset-4">
+        <div class="form-group">
+            <label for="username" class="visually-hidden">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Username" value="" data-rule-required="true" data-toggle="tooltip" data-container="body" data-content="This is the tooltip content field 1.">
+        </div>
+            
+        <div class="form-group">
+            <label for="password" class="visually-hidden">Password</label>
+            <input type="password" class="form-control" id="password" name="password"  placeholder="Password" data-rule-required="true" data-toggle="tooltip" data-container="body" data-content="This is the tooltip content field 2.">
+        </div>
+
+        <div class="form-group">
+            <label for="password" class="visually-hidden">Password</label>
+            <input type="password" class="form-control" id="password" name="password"  placeholder="Password" data-rule-required="true" data-toggle="tooltip" data-container="body" data-content="This is the tooltip content field 2.">
+        </div>
+
+        <div class="form-group">
+            <label for="password" class="visually-hidden">Password</label>
+            <input type="password" class="form-control" id="password" name="password"  placeholder="Password" data-rule-required="true" data-toggle="tooltip" data-container="body" data-content="This is the tooltip content field 2.">
+        </div>
+
+        <div class="form-group">
+            <label for="password" class="visually-hidden">Password</label>
+            <input type="password" class="form-control" id="password" name="password"  placeholder="Password" data-rule-required="true" data-toggle="tooltip" data-container="body" data-content="This is the tooltip content field 2.">
+        </div>
+
+        <div class="form-group">
+            <label for="password" class="visually-hidden">Password</label>
+            <input type="password" class="form-control" id="password" name="password"  placeholder="Password" data-rule-required="true" data-toggle="tooltip" data-container="body" data-content="This is the tooltip content field 2.">
+        </div>
+
+        <div class="form-group">
+            <label for="password" class="visually-hidden">Password</label>
+            <input type="password" class="form-control" id="password" name="password"  placeholder="Password" data-rule-required="true" data-toggle="tooltip" data-container="body" data-content="This is the tooltip content field 2.">
+        </div>
     </div>
 
 </div>
@@ -27,15 +64,22 @@
 <script src="jquery.tooltip.js"></script>
 <script>
     // Initiate tooltips
-    $( '.tip' ).tooltip( {
-        contentSrc: 'title',
-        tooltipOverlap : 20,
-        tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div><span class="tri">&nbsp;</span></div>'
-    });
-    $( '.tt' ).tooltip( {
-        contentSrc: 'title',
-        tooltipOverlap : 20,
-        replaceTarget: true,
+    // $( '.tip' ).tooltip( {
+    //     contentSrc: 'title',
+    //     tooltipOverlap : 20,
+    //     tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div><span class="tri">&nbsp;</span></div>'
+    // });
+    // $( '.tt' ).tooltip( {
+    //     contentSrc: 'title',
+    //     tooltipOverlap : 20,
+    //     replaceTarget: true,
+    //     tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div><span class="tri">&nbsp;</span></div>'
+    // });
+    $( '*[data-toggle="tooltip"]' ).tooltip( {
+        contentSrc: 'attr',
+        //tooltipOverlap : 20,
+        //replaceTarget: false,
+        preferredPosition : 'bottom-middle',
         tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div><span class="tri">&nbsp;</span></div>'
     });
 </script>

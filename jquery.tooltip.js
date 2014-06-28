@@ -7,7 +7,8 @@
 		$.fn.tooltip.options = {
 			actionTouch : 'click',
 			actionDesktop : 'hover',
-			contentSrc : 'text', // text, html, title or alt
+			contentSrc : 'text', // text, html, title, alt or attr
+			contentAttrName : 'data-content',
 			ttContainerClass : 'tip',
 			ttTargetClass : 'tip-target',
 			ttClass : 'tip-content',
@@ -15,11 +16,9 @@
 			tipTarget : '<span class="tt">?</span>',
 			tpl : '<span><%=content%></span>',
 			inheritedAttribute : false,
-			offsetAboveX : 0,
-			offsetAboveY : 0,
-			offsetBelowX : 0,
-			offsetBelowY : 0,
-			tooltipOverlap : 0
+			offsetFromTarget : 20,
+			tooltipOverlap : 0,
+			preferredPosition : 'top-middle'
 		};
 
 		// Merge options
@@ -77,6 +76,9 @@
 				case 'alt':
 					content.content = $( this ).attr( 'alt' );
 					break;
+				case 'attr':
+					content.content = $( this ).attr( options.contentAttrName );
+					break;
 				default:
 					content.content = $( this ).text();
 			}
@@ -130,7 +132,7 @@
 
 		function toggleOn ( e ) {
 			var	tgt = $( e.target ),
-				ttNum = tgt.closest( 'a[data-ti]' ).attr( 'data-ti' ),
+				ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ),
 				currentTT = $( '#tt-' + ttNum );
 
 			e.preventDefault();
@@ -144,7 +146,7 @@
 
 		function toggleOff ( e ) {
 			var	tgt = $( e.target ),
-				ttNum = tgt.closest( 'a[data-ti]' ).attr( 'data-ti' ),
+				ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ),
 				currentTT = $( '#tt-' + ttNum );
 
 			e.preventDefault();
@@ -177,11 +179,14 @@
 			}
 		}
 
-		function setPosition ( tgt, currentTT ) {
+		function setPosition ( tgt, currentTT, pos ) {
 			var posX = 0,
 				posY = 0,
 				scrollTop = $( window ).scrollTop(),
-				windowWidth = $( window ).width();
+				windowWidth = $( window ).width(),
+				windowHeight = $( window ).height(),
+				offsetFromTarget = options.offsetFromTarget,
+				preferredPosition = pos || options.preferredPosition;
 
 			// Width and height of the target element
 			var targetWidth = tgt.width(),
@@ -203,41 +208,146 @@
 
 				// console.log(contentWidth);
 				// console.log(contentHeight);
+			
+			switch ( preferredPosition ) {
+				case 'top-left' :
+					if ( checkFitsTop() ) {
+						positionTopLeft();
+					} else {
+						positionBottomLeft();
+					}
+					break;
 
-			// Combine to get top and left positioning
-			posX = targetX + targetWidth / 2 - contentWidth / 2;
-			posY = targetY - contentHeight + offsetAboveY;
+				case 'top-middle' :
+					if ( checkFitsTop() ) {
+						positionTopMiddle();
+					} else {
+						positionBottomMiddle();
+					}
+					break;
 
-			// Check whether tooltip will fit within left edge
-			if ( targetX - ( contentWidth / 2 ) < 0 ) {
-				posX = posX + ( contentWidth / 2 );
-				currentTT.addClass('left');
-			} else {
-				currentTT.removeClass('left');
+				case 'top-right' :
+					positionTopRight();
+					break;
+
+				case 'middle-left' :
+					if ( checkFitsLeft() ) {
+						positionMiddleLeft();
+					} else {
+						positionTopMiddle();
+					}
+					break;
+
+				case 'middle-right' :
+					if ( checkFitsRight() ) {
+						positionMiddleRight();
+					} else {
+						positionTopMiddle();
+					}
+					break;
+
+				case 'bottom-left' :
+					positionBottomLeft();
+					break;
+
+				case 'bottom-middle' :
+					if ( checkFitsBottom() ) {
+						positionBottomMiddle();
+					} else {
+						positionTopMiddle();
+					}
+					break;
+
+				case 'bottom-right' :
+					positionBottomRight();
+					break;
 			}
 
-			// Check whether tooltip will fit within right edge
-			if ( targetX + ( contentWidth / 2 ) > windowWidth ) {
-				posX = posX - ( windowWidth - targetX );
-				currentTT.addClass('right');
-			} else {
-				currentTT.removeClass('right');
+			function positionTopLeft() {
+				posX = targetX - contentWidth / 2;
+				posY = targetY - contentHeight - offsetFromTarget;
+				currentTT.addClass( 'top-left' );
 			}
 
-			// Appear above if theres enough room. Else show below
-			if ( scrollTop > targetY - contentHeight ) {
-				currentTT.addClass('bottom');
-				posX = posX - offsetAboveX;
-				posY = posY + contentHeight + targetHeight;
-			} else {
-				currentTT.removeClass('bottom');
+			function positionTopMiddle() {
+				posX = targetX + targetWidth / 2 - contentWidth / 2;
+				posY = targetY - contentHeight - offsetFromTarget;
+				currentTT.addClass('top-middle');
 			}
 
-			// Apply these positions to the tooltip
+			function positionTopRight() {
+				posX = targetX + targetWidth - contentWidth / 2;
+				posY = targetY - contentHeight - offsetFromTarget;
+				currentTT.addClass('top-right');
+			}
+
+			function positionMiddleLeft() {
+				posX = targetX - contentWidth - offsetFromTarget;
+				posY = targetY - contentHeight / 2 + targetHeight / 2;
+				currentTT.addClass('middle-left');
+			}
+
+			function positionMiddleRight() {
+				posX = targetX + targetWidth + offsetFromTarget;
+				posY = targetY - contentHeight / 2 + targetHeight / 2;
+				currentTT.addClass('middle-right');
+			}
+
+			function positionBottomLeft() {
+				posX = targetX - contentWidth / 2;
+				posY = targetY + targetHeight + offsetFromTarget;
+				currentTT.addClass('bottom-left');
+			}
+
+			function positionBottomMiddle() {
+				posX = targetX + targetWidth / 2 - contentWidth / 2;
+				posY = targetY + targetHeight + offsetFromTarget;
+				currentTT.addClass('bottom-middle');
+			}
+
+			function positionBottomRight() {
+				posX = targetX + targetWidth - contentWidth / 2;
+				posY = targetY + targetHeight + offsetFromTarget;
+				currentTT.addClass('bottom-right');
+			}
+
+			function checkFitsTop() {
+				if ( scrollTop > targetY - contentHeight - offsetFromTarget ) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+
+			function checkFitsBottom() {
+				if ( scrollTop + windowHeight < targetY + contentHeight + offsetFromTarget ) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+			
+			function checkFitsLeft() {
+				if ( targetX - ( contentWidth / 2 ) < 0 ) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+
+			function checkFitsRight() {
+				if ( targetX + contentWidth + offsetFromTarget > windowWidth ) {
+					return false;
+				}  else {
+					return true;
+				}
+			}
+
 			currentTT.css({
 				'left' : posX,
 				'top' : posY
 			});
+		
 		}
 	};
 })( jQuery );
