@@ -148,7 +148,7 @@
 
 			if ( action === 'none' ) {
 				tt.on( 'click', function( e ) {
-					var tgt = $( e.target ).parents( '.' + ttClass );
+					var tgt = $( e.target );
 					toggleOff( tgt );
 				});
 			}
@@ -156,7 +156,9 @@
 			// Additional interactions that will close any open tooltips
 
 			// Click anywhere on the page
-			$( 'html, body' ).on( 'click', closeAllOpen );
+			if ( action !== 'none') {
+				$( 'html, body' ).on( 'click', closeAllOpen );
+			}	
 
 			// Resize window
 			$( window ).on( 'throttledresize', changePosition );
@@ -191,7 +193,6 @@
 			var	tgt = el,
 				ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ) ,
 				currentTT = $( '#tt-' + ttNum );
-
 
 			setPosition( tgt, currentTT );
 			currentTT.css('display', 'none');
@@ -448,9 +449,6 @@
 				var	tgt = $( this ),
 					ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ),
 					currentTT = $( '#tt-' + ttNum );
-
-				console.log(tgt)
-				console.log(currentTT)
 
 				setPosition( tgt, currentTT );
 			});
