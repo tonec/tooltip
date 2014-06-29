@@ -5,6 +5,7 @@
 
 		// Default options
 		$.fn.tooltip.options = {
+			actionDefault : 'hover',
 			actionTouch : 'click',
 			actionDesktop : 'hover',
 			contentSrc : 'text', // text, html, title, alt or attr
@@ -40,7 +41,7 @@
 		if ( isTouch() ) {
 			action = options.actionTouch;
 		} else {
-			action = options.actionDesktop;
+			action = options.actionDefault;
 		}
 
 		$( this ).each(function () {
