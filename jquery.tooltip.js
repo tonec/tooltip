@@ -387,7 +387,7 @@
 			}
 
 			function checkFitsBottom() {
-				if ( scrollTop + windowHeight < targetY + contentHeight + offsetFromTarget ) {
+				if ( scrollTop + windowHeight < targetY + targetHeight + contentHeight + offsetFromTarget ) {
 					return false;
 				} else {
 					return true;
@@ -403,7 +403,7 @@
 			}
 
 			function checkFitsRight() {
-				if ( targetX + contentWidth + offsetFromTarget > windowWidth ) {
+				if ( targetX + targetWidth + contentWidth + offsetFromTarget > windowWidth ) {
 					return false;
 				}  else {
 					return true;
