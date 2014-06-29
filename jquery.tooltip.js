@@ -1,3 +1,11 @@
+// jQuery Tooltip plugin
+// ---------------------
+//
+// A responsive tooltip
+//
+// Author: Tony Coop
+// Website: http://thewholeworldwindow.co.uk
+// Repo: http://github.com/tonec/tooltip
 
 (function ( $ ) {
 
