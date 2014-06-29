@@ -210,12 +210,26 @@
 				// console.log(contentWidth);
 				// console.log(contentHeight);
 			
+			// Manage tooltip position based on available space
+			// I think I've created a monster.
+			// Essentially, the operations are simple. Check whether theirs enough 
+			// space for the tooltip in it's preferred position, if not, position it elsewhere.
 			switch ( preferredPosition ) {
+
 				case 'top-left' :
 					if ( checkFitsTop() ) {
-						positionTopLeft();
+						if ( checkFitsLeft() ) {
+							positionTopLeft();
+						} else {
+							positionTopMiddle();
+						}
 					} else {
-						positionBottomLeft();
+						if ( checkFitsLeft() ) {
+							positionBottomLeft();
+						} else {
+							positionBottomMiddle();
+						}
+						
 					}
 					break;
 
@@ -228,14 +242,30 @@
 					break;
 
 				case 'top-right' :
-					positionTopRight();
+					if ( checkFitsTop() ) {
+						if ( checkFitsRight() ) {
+							positionTopRight();
+						} else {
+							positionTopMiddle();
+						}
+					} else {
+						if ( checkFitsRight() ) {
+							positionBottomRight()
+						} else {
+							positionBottomMiddle();
+						}
+					}
 					break;
 
 				case 'middle-left' :
 					if ( checkFitsLeft() ) {
 						positionMiddleLeft();
 					} else {
-						positionTopMiddle();
+						if ( checkFitsTop() ) {
+							positionTopMiddle();
+						} else {
+							positionBottomMiddle();
+						}
 					}
 					break;
 
@@ -243,12 +273,28 @@
 					if ( checkFitsRight() ) {
 						positionMiddleRight();
 					} else {
-						positionTopMiddle();
+						if ( checkFitsTop() ) {
+							positionTopMiddle();
+						} else {
+							positionBottomMiddle();
+						}
 					}
 					break;
 
 				case 'bottom-left' :
-					positionBottomLeft();
+					if ( checkFitsBottom() ) {
+						if ( checkFitsLeft() ) {
+							positionBottomLeft();
+						} else {
+							positionBottomMiddle();
+						}
+					} else {
+						if ( checkFitsLeft() ) {
+							positionTopLeft();
+						} else {
+							positionTopMiddle();
+						}
+					}
 					break;
 
 				case 'bottom-middle' :
@@ -260,7 +306,19 @@
 					break;
 
 				case 'bottom-right' :
-					positionBottomRight();
+					if ( checkFitsBottom() ) {
+						if ( checkFitsRight() ) {
+							positionBottomRight();
+						} else {
+							positionBottomMiddle();
+						}
+					} else {
+						if ( checkFitsRight() ) {
+							positionTopRight();
+						} else {
+							positionTopMiddle();
+						}
+					}
 					break;
 			}
 
