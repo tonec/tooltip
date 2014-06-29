@@ -39,23 +39,23 @@
 <script src="jquery.tooltip.js"></script>
 <script>
     //Initiate tooltips
-    // $( '.tip' ).tooltip( {
-    //     contentSrc: 'title',
-    //     tooltipOverlap : 20,
-    //     tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div><span class="tri">&nbsp;</span></div>'
-    // });
-    // $( '.tt' ).tooltip( {
-    //     contentSrc: 'title',
-    //     tooltipOverlap : 20,
-    //     replaceTarget: true,
-    //     tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div><span class="tri">&nbsp;</span></div>'
-    // });
+    $( '.tip' ).tooltip( {
+        contentSrc: 'title',
+        tooltipOverlap : 20,
+        preferredPosition : 'top-middle',
+        tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div></div>'
+    });
+    $( '.tt' ).tooltip( {
+        contentSrc: 'title',
+        tooltipOverlap : 20,
+        replaceTarget: true,
+        preferredPosition : 'top-middle',
+        tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div></div>'
+    });
     $( '*[data-toggle="tooltip"]' ).tooltip( {
         contentSrc: 'attr',
-        //tooltipOverlap : 20,
-        //replaceTarget: false,
-        preferredPosition : 'top-middle',
-        tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div><span class="tri">&nbsp;</span></div>'
+        preferredPosition : 'middle-right',
+        tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div></div>'
     });
 
 

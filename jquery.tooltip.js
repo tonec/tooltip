@@ -47,10 +47,9 @@
 			offsetAboveY = options.offsetAboveY,
 			offsetBelowX = options.offsetBelowX,
 			offsetBelowY = options.offsetBelowY,
-			action,
-			self = this;
+			action;
 
-		this.tooltipNumcache = this.tooltipNumcache || [];
+		window.tooltipNumcache = window.tooltipNumcache || [];
 
 		if ( isTouch() ) {
 			action = options.actionTouch;
@@ -63,9 +62,9 @@
 			// Handle the caching of the tooltip number.
 			do {
 				ttNum++;
-			} while ( ttNum <= this.tooltipNumcache );
+			} while ( ttNum <= window.tooltipNumcache );
 
-			this.tooltipNumcache = ttNum;
+			window.tooltipNumcache = ttNum;
 
 			var tipTarget = $( options.tipTarget ),
 				tpl = '',
@@ -334,49 +333,49 @@
 			function positionTopLeft() {
 				posX = targetX - contentWidth / 2;
 				posY = targetY - contentHeight - offsetFromTarget;
-				currentTT.addClass( 'top-left' );
+				currentTT.removeClass().addClass( ttClass + ' top-left' );
 			}
 
 			function positionTopMiddle() {
 				posX = targetX + targetWidth / 2 - contentWidth / 2;
 				posY = targetY - contentHeight - offsetFromTarget;
-				currentTT.addClass('top-middle');
+				currentTT.removeClass().addClass( ttClass + ' top-middle');
 			}
 
 			function positionTopRight() {
 				posX = targetX + targetWidth - contentWidth / 2;
 				posY = targetY - contentHeight - offsetFromTarget;
-				currentTT.addClass('top-right');
+				currentTT.removeClass().addClass( ttClass + ' top-right');
 			}
 
 			function positionMiddleLeft() {
 				posX = targetX - contentWidth - offsetFromTarget;
 				posY = targetY - contentHeight / 2 + targetHeight / 2;
-				currentTT.addClass('middle-left');
+				currentTT.removeClass().addClass( ttClass + ' middle-left');
 			}
 
 			function positionMiddleRight() {
 				posX = targetX + targetWidth + offsetFromTarget;
 				posY = targetY - contentHeight / 2 + targetHeight / 2;
-				currentTT.addClass('middle-right');
+				currentTT.removeClass().addClass( ttClass + ' middle-right');
 			}
 
 			function positionBottomLeft() {
 				posX = targetX - contentWidth / 2;
 				posY = targetY + targetHeight + offsetFromTarget;
-				currentTT.addClass('bottom-left');
+				currentTT.removeClass().addClass( ttClass + ' bottom-left');
 			}
 
 			function positionBottomMiddle() {
 				posX = targetX + targetWidth / 2 - contentWidth / 2;
 				posY = targetY + targetHeight + offsetFromTarget;
-				currentTT.addClass('bottom-middle');
+				currentTT.removeClass().addClass( ttClass + ' bottom-middle');
 			}
 
 			function positionBottomRight() {
 				posX = targetX + targetWidth - contentWidth / 2;
 				posY = targetY + targetHeight + offsetFromTarget;
-				currentTT.addClass('bottom-right');
+				currentTT.removeClass().addClass( ttClass + 'bottom-right');
 			}
 
 			function checkFitsTop() {
@@ -419,4 +418,4 @@
 		}
 
 	};
-})( jQuery );
+})( jQuery, window );
