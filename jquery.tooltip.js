@@ -108,7 +108,7 @@
 			});
 
 			// Insert tooltip. 
-			$( this ).removeClass().addClass( containerClasses );
+			$( this ).addClass( containerClasses );
 			
 			if ( options.replaceTarget ) {
 				$( this ).html( tipTarget );
@@ -207,16 +207,16 @@
 				preferredPosition = options.preferredPosition || currentTT.attr('data-position');
 
 			// Width and height of the target element
-			var targetWidth = tgt.width(),
-				targetHeight = tgt.height();
+			var targetWidth = tgt.outerWidth(),
+				targetHeight = tgt.outerHeight();
 
 			// X and Y position of the target element
 			var targetX = tgt.offset().left,
 				targetY = tgt.offset().top;
 
 			// Width and height of the tooltip with content
-			var contentWidth = currentTT.width(),
-				contentHeight = currentTT.height();
+			var contentWidth = currentTT.outerWidth(),
+				contentHeight = currentTT.outerHeight();
 			
 			// Manage tooltip position based on available space
 			// I think I've created a monster.
