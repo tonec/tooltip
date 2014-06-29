@@ -35,12 +35,15 @@
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+<script src="jquery.debouncedresize.js"></script>
+<script src="jquery.throttledresize.js"></script>
 <script src="micro-templating.js"></script>
 <script src="jquery.tooltip.js"></script>
 <script>
     //Initiate tooltips
     $( '.tip' ).tooltip( {
-        contentSrc: 'title',
+        actionDefault : 'click',
+        contentSrc: '',
         tooltipOverlap : 20,
         preferredPosition : 'top-middle',
         tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div></div>'
@@ -53,6 +56,7 @@
         tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div></div>'
     });
     $( '*[data-toggle="tooltip"]' ).tooltip( {
+        actionDefault : 'click',
         contentSrc: 'attr',
         preferredPosition : 'middle-right',
         tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div></div>'

@@ -155,22 +155,24 @@
 
 			// Additional interactions that will close any open tooltips
 
-			if ( action !== 'none' ) {
-				// Click anywhere on the page
-				$( 'html, body' ).on( 'click', closeAllOpen );
-				// Resize window
-				$( window ).on( 'throttledresize',  closeAllOpen );
-			}
+			// Click anywhere on the page
+			$( 'html, body' ).on( 'click', closeAllOpen );
+
+			// Resize window
+			$( window ).on( 'throttledresize', changePosition );
 
 		});
 
 		function toggleSwitch ( e ) {
 			var	tgt = $( e.target );
 
+			e.preventDefault();
+			e.stopPropagation();
+
 			if ( !tgt.hasClass('tt-open') ) {
-				toggleOn( e );
+				toggleOn( tgt );
 			} else {
-				toggleOff( e );
+				toggleOff( tgt );
 			}
 		}
 
@@ -189,6 +191,7 @@
 			var	tgt = el,
 				ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ) ,
 				currentTT = $( '#tt-' + ttNum );
+
 
 			setPosition( tgt, currentTT );
 			currentTT.css('display', 'none');
@@ -209,7 +212,7 @@
 		}
 
 		// Test for touch screen functionality 
-		function isTouch() {
+		function isTouch () {
 			if ( ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch ) {
 				return true;
 			} else {
@@ -436,6 +439,21 @@
 				'top' : posY
 			});
 		
+		}
+
+		function changePosition () {
+			var openTooltips = $( '.tt-open' );
+
+			openTooltips.each( function() {
+				var	tgt = $( this ),
+					ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ),
+					currentTT = $( '#tt-' + ttNum );
+
+				console.log(tgt)
+				console.log(currentTT)
+
+				setPosition( tgt, currentTT );
+			});
 		}
 
 	};
