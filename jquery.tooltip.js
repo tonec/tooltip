@@ -3,6 +3,17 @@
 
 	$.fn.tooltip = function ( options ) {
 
+		var methods = {
+			show : function( ) {
+				toggleOn( $( this ) );
+			},
+			hide : function( ) {}
+		};
+
+		if ( methods[ options] ) {
+			return methods[ options ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+		}
+
 		// Default options
 		$.fn.tooltip.options = {
 			actionDefault : 'hover',
@@ -34,7 +45,8 @@
 			offsetAboveY = options.offsetAboveY,
 			offsetBelowX = options.offsetBelowX,
 			offsetBelowY = options.offsetBelowY,
-			action;
+			action,
+			self = this;
 
 		this.tooltipNumcache = this.tooltipNumcache || [];
 
@@ -106,7 +118,17 @@
 			
 			// Set hide/show event types based on the given options
 			if ( action === 'hover' ) {
-				$( this ).mouseenter( toggleOn ).mouseleave( toggleOff );
+				$( this ).mouseenter( function( e ){
+					var el = $( e.target );
+					e.preventDefault();
+					e.stopPropagation();
+					toggleOn( el );
+				}).mouseleave( function( e ){
+					var el = $( e.target );
+					e.preventDefault();
+					e.stopPropagation();
+					toggleOff( el );
+				});
 			}
 
 			if ( action === 'click' ) {
@@ -131,36 +153,30 @@
 			}
 		}
 
-		function toggleOn ( e ) {
-			var	tgt = $( e.target ),
+		function toggleOn ( el ) {
+			var	tgt = el,
 				ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ),
 				currentTT = $( '#tt-' + ttNum );
 
-			e.preventDefault();
-			e.stopPropagation();
-
-			closeAllOpen( e );
+			closeAllOpen( el );
 			setPosition( tgt, currentTT );
 			currentTT.css( 'display', 'block' );
 			tgt.addClass('tt-open');
 		}
 
-		function toggleOff ( e ) {
-			var	tgt = $( e.target ),
+		function toggleOff ( el ) {
+			var	tgt = el,
 				ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ),
 				currentTT = $( '#tt-' + ttNum );
-
-			e.preventDefault();
-			e.stopPropagation();
 
 			setPosition( tgt, currentTT );
 			currentTT.css('display', 'none');
 			tgt.removeClass('tt-open');
 		}
 
-		function closeAllOpen ( e ) {
+		function closeAllOpen ( el ) {
 
-			if ( !$( e.target ) ) {
+			if ( !el ) {
 				return;
 			}
 
@@ -408,5 +424,7 @@
 			});
 		
 		}
+
+		return this;
 	};
 })( jQuery );
