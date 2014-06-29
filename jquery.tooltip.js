@@ -30,7 +30,7 @@
 			tipTarget : '<span class="tt">?</span>',
 			tpl : '<span><%=content%></span>',
 			inheritedAttribute : false,
-			offsetFromTarget : 20,
+			offsetFromTarget : 12,
 			tooltipOverlap : 0,
 			preferredPosition : 'top-middle'
 		};
@@ -51,7 +51,9 @@
 
 		window.tooltipNumcache = window.tooltipNumcache || [];
 
-		if ( isTouch() ) {
+		if ( options.actionDefault === 'none' ) {
+			action = 'none';
+		} else if ( isTouch() ) {
 			action = options.actionTouch;
 		} else {
 			action = options.actionDefault;
@@ -73,7 +75,7 @@
 
 			$( this ).addClass( ttTargetClassSelector ).attr( 'data-ti', ttNum );
 			
-			tpl = '<div class="' + ttClass + '" id="tt-' + ttNum + '" data-position="' + options.preferredPosition + '" data-offset="' + options.offsetFromTarget + '">' + options.tpl + '</div>';
+			tpl = '<div class="' + ttClass + '" id="tt-' + ttNum + '" data-ttclass="' + ttClass + '" data-position="' + options.preferredPosition + '" data-offset="' + options.offsetFromTarget + '" data-ti="' + ttNum + '">' + options.tpl + '</div>';
 
 			// Get tooltip contents
 			switch ( options.contentSrc ) {
@@ -136,12 +138,22 @@
 				$( this ).on( action, toggleSwitch );
 			}
 
+			if ( action === 'none' ) {
+				tt.on( 'click', function( e ) {
+					var tgt = $( e.target ).parents( '.' + ttClass );
+					toggleOff( tgt );
+				});
+			}
+
 			// Additional interactions that will close any open tooltips
 
-			// Click anywhere on the page
-			$( 'html, body' ).on( 'click', closeAllOpen );
-			// Resize window
-			$( window ).on( 'throttledresize',  closeAllOpen );
+			if ( action !== 'none' ) {
+				// Click anywhere on the page
+				$( 'html, body' ).on( 'click', closeAllOpen );
+				// Resize window
+				$( window ).on( 'throttledresize',  closeAllOpen );
+			}
+
 		});
 
 		function toggleSwitch ( e ) {
@@ -159,6 +171,8 @@
 				ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ),
 				currentTT = $( '#tt-' + ttNum );
 
+			console.log(currentTT)
+
 			closeAllOpen( el );
 			setPosition( tgt, currentTT );
 			currentTT.css( 'display', 'block' );
@@ -167,7 +181,7 @@
 
 		function toggleOff ( el ) {
 			var	tgt = el,
-				ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ),
+				ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ) ,
 				currentTT = $( '#tt-' + ttNum );
 
 			setPosition( tgt, currentTT );
@@ -203,8 +217,9 @@
 				scrollTop = $( window ).scrollTop(),
 				windowWidth = $( window ).width(),
 				windowHeight = $( window ).height(),
-				offsetFromTarget = options.offsetFromTarget || currentTT.attr('data-offset'),
-				preferredPosition = options.preferredPosition || currentTT.attr('data-position');
+				ttClass = options.ttClass || currentTT.attr( 'data-ttclass' ),
+				offsetFromTarget = options.offsetFromTarget || parseInt( currentTT.attr( 'data-offset' ) ),
+				preferredPosition = options.preferredPosition || currentTT.attr(   'data-position' );
 
 			// Width and height of the target element
 			var targetWidth = tgt.outerWidth(),
@@ -339,43 +354,43 @@
 			function positionTopMiddle() {
 				posX = targetX + targetWidth / 2 - contentWidth / 2;
 				posY = targetY - contentHeight - offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + ' top-middle');
+				currentTT.removeClass().addClass( ttClass + ' top-middle' );
 			}
 
 			function positionTopRight() {
 				posX = targetX + targetWidth - contentWidth / 2;
 				posY = targetY - contentHeight - offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + ' top-right');
+				currentTT.removeClass().addClass( ttClass + ' top-right' );
 			}
 
 			function positionMiddleLeft() {
 				posX = targetX - contentWidth - offsetFromTarget;
 				posY = targetY - contentHeight / 2 + targetHeight / 2;
-				currentTT.removeClass().addClass( ttClass + ' middle-left');
+				currentTT.removeClass().addClass( ttClass + ' middle-left' );
 			}
 
 			function positionMiddleRight() {
 				posX = targetX + targetWidth + offsetFromTarget;
 				posY = targetY - contentHeight / 2 + targetHeight / 2;
-				currentTT.removeClass().addClass( ttClass + ' middle-right');
+				currentTT.removeClass().addClass( ttClass + ' middle-right' );
 			}
 
 			function positionBottomLeft() {
 				posX = targetX - contentWidth / 2;
 				posY = targetY + targetHeight + offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + ' bottom-left');
+				currentTT.removeClass().addClass( ttClass + ' bottom-left' );
 			}
 
 			function positionBottomMiddle() {
 				posX = targetX + targetWidth / 2 - contentWidth / 2;
 				posY = targetY + targetHeight + offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + ' bottom-middle');
+				currentTT.removeClass().addClass( ttClass + ' bottom-middle' );
 			}
 
 			function positionBottomRight() {
 				posX = targetX + targetWidth - contentWidth / 2;
 				posY = targetY + targetHeight + offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + 'bottom-right');
+				currentTT.removeClass().addClass( ttClass + 'bottom-right' );
 			}
 
 			function checkFitsTop() {
