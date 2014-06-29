@@ -179,8 +179,6 @@
 				ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ),
 				currentTT = $( '#tt-' + ttNum );
 
-			console.log(currentTT)
-
 			closeAllOpen( el );
 			setPosition( tgt, currentTT );
 			currentTT.css( 'display', 'block' );
@@ -356,49 +354,49 @@
 			function positionTopLeft() {
 				posX = targetX - contentWidth / 2;
 				posY = targetY - contentHeight - offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + ' top-left' );
+				currentTT.removeClass().addClass( ttClass + ' tip-top-left' );
 			}
 
 			function positionTopMiddle() {
 				posX = targetX + targetWidth / 2 - contentWidth / 2;
 				posY = targetY - contentHeight - offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + ' top-middle' );
+				currentTT.removeClass().addClass( ttClass + ' tip-top-middle' );
 			}
 
 			function positionTopRight() {
 				posX = targetX + targetWidth - contentWidth / 2;
 				posY = targetY - contentHeight - offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + ' top-right' );
+				currentTT.removeClass().addClass( ttClass + ' tip-top-right' );
 			}
 
 			function positionMiddleLeft() {
 				posX = targetX - contentWidth - offsetFromTarget;
 				posY = targetY - contentHeight / 2 + targetHeight / 2;
-				currentTT.removeClass().addClass( ttClass + ' middle-left' );
+				currentTT.removeClass().addClass( ttClass + ' tip-middle-left' );
 			}
 
 			function positionMiddleRight() {
 				posX = targetX + targetWidth + offsetFromTarget;
 				posY = targetY - contentHeight / 2 + targetHeight / 2;
-				currentTT.removeClass().addClass( ttClass + ' middle-right' );
+				currentTT.removeClass().addClass( ttClass + ' tip-middle-right' );
 			}
 
 			function positionBottomLeft() {
 				posX = targetX - contentWidth / 2;
 				posY = targetY + targetHeight + offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + ' bottom-left' );
+				currentTT.removeClass().addClass( ttClass + ' tip-bottom-left' );
 			}
 
 			function positionBottomMiddle() {
 				posX = targetX + targetWidth / 2 - contentWidth / 2;
 				posY = targetY + targetHeight + offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + ' bottom-middle' );
+				currentTT.removeClass().addClass( ttClass + ' tip-bottom-middle' );
 			}
 
 			function positionBottomRight() {
 				posX = targetX + targetWidth - contentWidth / 2;
 				posY = targetY + targetHeight + offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + 'bottom-right' );
+				currentTT.removeClass().addClass( ttClass + 'tip-bottom-right' );
 			}
 
 			function checkFitsTop() {
