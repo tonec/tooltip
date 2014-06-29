@@ -7,7 +7,9 @@
 			show : function( ) {
 				toggleOn( $( this ) );
 			},
-			hide : function( ) {}
+			hide : function( ) {
+				toggleOff( $( this ) );
+			}
 		};
 
 		if ( methods[ options] ) {
@@ -72,7 +74,7 @@
 
 			$( this ).addClass( ttTargetClassSelector ).attr( 'data-ti', ttNum );
 			
-			tpl = '<div class="' + ttClass + '" id="tt-' + ttNum + '">' + options.tpl + '</div>';
+			tpl = '<div class="' + ttClass + '" id="tt-' + ttNum + '" data-position="' + options.preferredPosition + '" data-offset="' + options.offsetFromTarget + '">' + options.tpl + '</div>';
 
 			// Get tooltip contents
 			switch ( options.contentSrc ) {
@@ -196,35 +198,26 @@
 			}
 		}
 
-		function setPosition ( tgt, currentTT, pos ) {
+		function setPosition ( tgt, currentTT ) {
 			var posX = 0,
 				posY = 0,
 				scrollTop = $( window ).scrollTop(),
 				windowWidth = $( window ).width(),
 				windowHeight = $( window ).height(),
-				offsetFromTarget = options.offsetFromTarget,
-				preferredPosition = pos || options.preferredPosition;
+				offsetFromTarget = options.offsetFromTarget || currentTT.attr('data-offset'),
+				preferredPosition = options.preferredPosition || currentTT.attr('data-position');
 
 			// Width and height of the target element
 			var targetWidth = tgt.width(),
 				targetHeight = tgt.height();
 
-				// console.log(targetWidth);
-				// console.log(targetHeight);
-
 			// X and Y position of the target element
 			var targetX = tgt.offset().left,
 				targetY = tgt.offset().top;
 
-				// console.log(targetX);
-				// console.log(targetY);
-
 			// Width and height of the tooltip with content
 			var contentWidth = currentTT.width(),
 				contentHeight = currentTT.height();
-
-				// console.log(contentWidth);
-				// console.log(contentHeight);
 			
 			// Manage tooltip position based on available space
 			// I think I've created a monster.
@@ -425,6 +418,5 @@
 		
 		}
 
-		return this;
 	};
 })( jQuery );
