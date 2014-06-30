@@ -7,7 +7,7 @@
 // Website: http://thewholeworldwindow.co.uk
 // Repo: http://github.com/tonec/tooltip
 
-(function ( $ ) {
+;(function ( $ ) {
 
 	$.fn.tooltip = function ( options ) {
 
@@ -28,12 +28,11 @@
 		$.fn.tooltip.options = {
 			actionDefault : 'hover',
 			actionTouch : 'click',
-			actionDesktop : 'hover',
 			contentSrc : 'text', // text, html, title, alt or attr
 			contentAttrName : 'data-content',
-			ttContainerClass : 'tip',
+			containerClass : 'tooltip',
 			ttTargetClass : 'tip-target',
-			ttClass : 'tip-content',
+			tooltipClass : 'tip-content',
 			replacetarget: false,
 			tipTarget : '<span class="tt">?</span>',
 			tpl : '<span><%=content%></span>',
@@ -47,10 +46,10 @@
 		options = $.extend( {}, $.fn.tooltip.options, options );
 
 		var ttNum = 0,
-			ttClass = options.ttClass,
+			ttClass = options.tooltipClass,
 			ttTargetClassSelector = options.ttTargetClass.replace( / /g, '.' ),
 			ttClassSelector = ttClass.replace( / /g, '.' ),
-			containerClasses = options.ttContainerClass,
+			containerClass = options.containerClass,
 			offsetAboveX = options.offsetAboveX,
 			offsetAboveY = options.offsetAboveY,
 			offsetBelowX = options.offsetBelowX,
@@ -61,6 +60,8 @@
 
 		if ( options.actionDefault === 'none' ) {
 			action = 'none';
+		} else if ( options.actionDefault === 'focus' ) {
+			action = 'focus';
 		} else if ( isTouch() ) {
 			action = options.actionTouch;
 		} else {
@@ -117,25 +118,28 @@
 				'z-index' : '1000'
 			});
 
-			// Insert tooltip. 
-			$( this ).addClass( containerClasses );
-			
+			// Insert tooltip
 			if ( options.replaceTarget ) {
 				$( this ).html( tipTarget );
 			}
 
-			$( this ).parent().addClass( 'has-frstip' );
+			$( this ).parent().addClass( 'has-' + containerClass );
 			$( 'body' ).append( tt );
 			
 			// Set hide/show event types based on the given options
 			if ( action === 'hover' ) {
-				$( this ).mouseenter( function( e ){
+
+				$( this ).mouseenter( function( e ) {
 					var el = $( e.target );
+
 					e.preventDefault();
 					e.stopPropagation();
 					toggleOn( el );
-				}).mouseleave( function( e ){
+				});
+
+				$( this ).mouseleave( function( e ) {
 					var el = $( e.target );
+
 					e.preventDefault();
 					e.stopPropagation();
 					toggleOff( el );
@@ -143,7 +147,40 @@
 			}
 
 			if ( action === 'click' ) {
+
+				// Standard click event
 				$( this ).on( action, toggleSwitch );
+
+				// Check if tab key is being used and use focus event for accessibilty
+				$( this ).focusin( function( e ) {
+
+					$( window ).keyup( function ( e ) {
+						var el = $( e.target );
+
+						if ( e.keyCode === 9 ) {
+					
+							e.preventDefault();
+							e.stopPropagation();
+							toggleOn( el );
+						}
+					});
+				});
+
+				$( this ).focusout( function( e ) {
+					$( window ).keyup(function ( e ) {
+
+						var el = $( e.target );
+
+						if ( e.keyCode === 9) {
+				
+							e.preventDefault();
+							e.stopPropagation();
+							toggleOff( el );
+						}
+					
+					});
+				});
+
 			}
 
 			if ( action === 'none' ) {
@@ -207,9 +244,7 @@
 
 			$('.' + ttClassSelector )
 				.filter(':visible')
-				.css('display', 'none')
-				.parents('.frstip')
-				.removeClass('tt-open');
+				.css('display', 'none');
 		}
 
 		// Test for touch screen functionality 
@@ -244,8 +279,8 @@
 				contentHeight = currentTT.outerHeight();
 			
 			// Manage tooltip position based on available space
-			// I think I've created a monster.
-			// Essentially, the operations are simple. Check whether theirs enough 
+			// I've created a monster.
+			// Essentially, the operations are simple. Check whether there's enough 
 			// space for the tooltip in it's preferred position, if not, position it elsewhere.
 			switch ( preferredPosition ) {
 
