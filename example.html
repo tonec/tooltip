@@ -28,7 +28,7 @@
             
         <div class="form-group">
             <label for="password" class="visually-hidden">Password</label>
-            <input type="password" class="form-control" id="password" name="password"  placeholder="Password" data-rule-required="true" data-toggle="tooltip" data-container="body" data-content="This is the tooltip content field 2.">
+            <input type="password" class="form-control" id="password" name="password"  placeholder="Password" data-rule-required="true" data-toggle="tooltip" data-container="body" data-content="This is the tooltip content field 2." data-heading="yada">
         </div>
     </div>
 
@@ -50,16 +50,16 @@
     });
     $( '.tt' ).tooltip( {
         contentSrc: 'title',
-        tooltipOverlap : 20,
+        tooltipOverlap : 40,
         replaceTarget: true,
-        preferredPosition : 'top-middle',
+        preferredPosition : 'bottom-left',
         tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div></div>'
     });
     $( '*[data-toggle="tooltip"]' ).tooltip( {
         actionDefault : 'click',
         contentSrc: 'attr',
         preferredPosition : 'middle-right',
-        tpl: '<div class="pod"><div class="pod-inner"><p><%=content%></p></div></div>'
+        tpl: '<div class="pod"><div class="pod-inner"><h4><%=heading%></h4><p><%=content%></p></div></div>'
     });
 
 

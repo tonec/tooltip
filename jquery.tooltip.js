@@ -1,493 +1,207 @@
-// jQuery Tooltip plugin
-// ---------------------
-//
-// A responsive tooltip
-//
-// Author: Tony Coop
-// Website: http://thewholeworldwindow.co.uk
-// Repo: http://github.com/tonec/tooltip
 
-;(function ( $ ) {
+(function ( $ ) {
 
-	$.fn.tooltip = function ( options ) {
-
-		var methods = {
-			show : function( ) {
-				toggleOn( $( this ) );
-			},
-			hide : function( ) {
-				toggleOff( $( this ) );
-			}
-		};
-
-		if ( methods[ options] ) {
-			return methods[ options ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-		}
+	$.fn.share = function ( options ) {
 
 		// Default options
-		$.fn.tooltip.options = {
-			actionDefault : 'hover',
-			actionTouch : 'click',
-			contentSrc : 'text', // text, html, title, alt or attr
-			contentAttrName : 'data-content',
-			containerClass : 'tooltip',
-			ttTargetClass : 'tip-target',
-			tooltipClass : 'tip-content',
-			replacetarget: false,
-			tipTarget : '<span class="tt">?</span>',
-			tpl : '<span><%=content%></span>',
-			inheritedAttribute : false,
-			offsetFromTarget : 12,
-			tooltipOverlap : 0,
-			preferredPosition : 'top-middle'
+		$.fn.share.options = {
+			url: 'undefined',
+			title: '', 
+			fbAppId: 'undefined',
+			linkElem: '',
+			customContent: false,
+			sourceTxt: 'title',
+			sourceImg: '',
+			defaultImgUrl: ''
 		};
 
 		// Merge options
-		options = $.extend( {}, $.fn.tooltip.options, options );
+		options = $.extend( {}, $.fn.share.options, options );
 
-		var ttNum = 0,
-			ttClass = options.tooltipClass,
-			ttTargetClassSelector = options.ttTargetClass.replace( / /g, '.' ),
-			ttClassSelector = ttClass.replace( / /g, '.' ),
-			containerClass = options.containerClass,
-			offsetAboveX = options.offsetAboveX,
-			offsetAboveY = options.offsetAboveY,
-			offsetBelowX = options.offsetBelowX,
-			offsetBelowY = options.offsetBelowY,
-			action;
+		window.twttr = window.twttr || {};
 
-		window.tooltipNumcache = window.tooltipNumcache || [];
+		// Ready Pinterest
+		$( 'head' ).append( '<sc' + 'ript type="text/javascript" src="//assets.pinterest.com/js/pinit.js"></sc' + 'ript>' );
 
-		if ( options.actionDefault === 'none' ) {
-			action = 'none';
-		} else if ( options.actionDefault === 'focus' ) {
-			action = 'focus';
-		} else if ( isTouch() ) {
-			action = options.actionTouch;
-		} else {
-			action = options.actionDefault;
-		}
-
-		$( this ).each(function () {
+		this.each( function() {
+			var elem = $( this );
 			
-			// Handle the caching of the tooltip number.
-			do {
-				ttNum++;
-			} while ( ttNum <= window.tooltipNumcache );
+			// Add click events
+			$( this ).delegate( options.linkElem, 'click', function( event ){
 
-			window.tooltipNumcache = ttNum;
+				event.preventDefault();
+				event.stopPropagation();
 
-			var tipTarget = $( options.tipTarget ),
-				tpl = '',
-				content = {},
-				tt = '';
+				var service = $(this).attr('rel'),
+					message = {},
+					tgt = event.target;
 
-			$( this ).addClass( ttTargetClassSelector ).attr( 'data-ti', ttNum );
-			
-			tpl = '<div class="' + ttClass + '" id="tt-' + ttNum + '" data-ttclass="' + ttClass + '" data-position="' + options.preferredPosition + '" data-offset="' + options.offsetFromTarget + '" data-ti="' + ttNum + '">' + options.tpl + '</div>';
+				message.txt = '';
+				message.img = '';
 
-			// Get tooltip contents
-			switch ( options.contentSrc ) {
-				case 'text':
-					content.content = $( this ).text();
-					break;
-				case 'html':
-					content.content = $( this ).html();
-					break;
-				case 'title':
-					content.content = $( this ).attr( 'title' );
-					$( this ).attr( 'title', '' );
-					break;
-				case 'alt':
-					content.content = $( this ).attr( 'alt' );
-					break;
-				case 'attr':
-					content.content = $( this ).attr( options.contentAttrName );
-					break;
-				default:
-					content.content = $( this ).text();
-			}
+				if ( service === undefined ) {
 
-			// Generate tooltip markup using the supplied template
-			tt = tmpl( tpl, content );
+					service = $(this).find('[rel]').attr('rel').split('|')[0];
+				} else {
 
-			// Hide tooltip initially
-			tt = $( tt ).css({
-				'display' : 'none',
-				'position' : 'absolute',
-				'z-index' : '1000'
+					service = service.split('|')[0];
+				}
+				
+				if ( options.customContent && options.customContentFunction === undefined ) {
+
+					message.txt = $( options.sourceTxt ).text().replace( /\s+/g , ' ' ).replace(/(^[\s\xA0]+|[\s\xA0]+$)/g, '');
+					message.img = $( options.sourceImg ).attr('src');
+
+					if ( message.img !== '' && typeof message.img !== 'undefined' ) {
+						message.img = message.img.split('://')[1];
+					}
+
+				} else if ( options.customContent && typeof options.customContentFunction === 'function' ) {
+
+					message = options.customContentFunction( tgt, options );
+				} else {
+
+					message.txt = $( 'title' ).text();
+				}
+
+				shareSwitch( service, message.txt, message.img );
 			});
 
-			// Insert tooltip
-			if ( options.replaceTarget ) {
-				$( this ).html( tipTarget );
+
+			function shareSwitch ( service, msg, img ) {
+							
+				switch (service) {
+					case 'twitter':
+						shareTwitter( msg, img );
+						break;
+					case 'linkedin':
+						shareLinkedin( msg, img );
+						break;
+					case 'facebook':
+						shareFacebook( msg, img );
+						break;
+					case 'googleplus':
+						shareGoogleplus( msg, img );
+						break;
+					case 'pinterest':
+						sharePinterest( msg, img );
+						break;
+					case 'email':
+						shareEmail( msg, img );
+						break;
+				}
 			}
 
-			$( this ).parent().addClass( 'has-' + containerClass );
-			$( 'body' ).append( tt );
-			
-			// Set hide/show event types based on the given options
-			if ( action === 'hover' ) {
 
-				$( this ).mouseenter( function( e ) {
-					var el = $( e.target );
+			function shareFacebook () {
+				var popWidth = 550,
+					popHeight = 450,
+					winHeight = $(window).height(),
+					winWidth = $(window).width(),
+					leftPos = Math.round( ( winWidth / 2 ) - ( popWidth / 2 ) ),
+					topPos = 0,
+					elem;
 
-					e.preventDefault();
-					e.stopPropagation();
-					toggleOn( el );
-				});
+				if ( winHeight > popHeight ) {
+					topPos = Math.round( ( winHeight / 2 ) - ( popHeight / 2 ) );
+				}
 
-				$( this ).mouseleave( function( e ) {
-					var el = $( e.target );
+				var url = 'https://www.facebook.com/sharer/sharer.php?u=' + options.url;
 
-					e.preventDefault();
-					e.stopPropagation();
-					toggleOff( el );
-				});
+				window.linkedin = window.linkedin || {};
+				window.linkedin.shareWin = window.open( url, '', 'left=' + leftPos + ',top=' + topPos + ',width=' + popWidth + ',height=' + popHeight + ',personalbar=0,toolbar=0,scrollbars=1,resizable=1');
 			}
 
-			if ( action === 'click' ) {
 
-				// Standard click event
-				$( this ).on( action, toggleSwitch );
+			function shareTwitter ( msg, img ) {
+				var popWidth = 550,
+					popHeight = 260,
+					winHeight = $(window).height(),
+					winWidth = $(window).width(),
+					leftPos = Math.round( ( winWidth / 2 ) - ( popWidth / 2 ) ),
+					topPos = 0,
+					elem;
 
-				// Check if tab key is being used and use focus event for accessibilty
-				$( this ).focusin( function( e ) {
+				if ( winHeight > popHeight ) {
+					topPos = Math.round( ( winHeight / 2 ) - ( popHeight / 2 ) );
+				}
 
-					$( window ).keyup( function ( e ) {
-						var el = $( e.target );
+				if ( !msg ) {
+					var msg = $('.message_twitter').text();
+				}
 
-						if ( e.keyCode === 9 ) {
-					
-							e.preventDefault();
-							e.stopPropagation();
-							toggleOn( el );
-						}
-					});
-				});
+				msg = encodeURIComponent( msg );
 
-				$( this ).focusout( function( e ) {
-					$( window ).keyup(function ( e ) {
+				window.twttr.shareWin = window.open(
+					'https://twitter.com/share?url=' + options.url + '&text=' + msg,
+					'', 'left=' + leftPos + ',top=' + topPos + ',width=' + popWidth + ',height=' + popHeight + ',personalbar=0,toolbar=0,scrollbars=1,resizable=1');
 
-						var el = $( e.target );
-
-						if ( e.keyCode === 9) {
-				
-							e.preventDefault();
-							e.stopPropagation();
-							toggleOff( el );
-						}
-					
-					});
-				});
-
+				elem = document.createElement('script');
+				elem.src = 'https://platform.twitter.com/widgets.js';
+				document.getElementsByTagName('head')[0].appendChild( elem );
 			}
 
-			if ( action === 'none' ) {
-				tt.on( 'click', function( e ) {
-					var tgt = $( e.target );
-					toggleOff( tgt );
-				});
+
+			function shareLinkedin ( msg, img ) {
+				var popWidth = 550,
+					popHeight = 450,
+					winHeight = $(window).height(),
+					winWidth = $(window).width(),
+					leftPos = Math.round( ( winWidth / 2 ) - ( popWidth / 2 ) ),
+					topPos = 0,
+					elem;
+
+				if ( winHeight > popHeight ) {
+					topPos = Math.round( ( winHeight / 2 ) - ( popHeight / 2 ) );
+				}
+
+				var url = 'http://www.linkedin.com/shareArticle?mini=true&url=' + options.url + '&title=&summary=' + msg;
+
+				window.linkedin = window.linkedin || {};
+				window.linkedin.shareWin = window.open( url, '', 'left=' + leftPos + ',top=' + topPos + ',width=' + popWidth + ',height=' + popHeight + ',personalbar=0,toolbar=0,scrollbars=1,resizable=1');
 			}
 
-			// Additional interactions that will close any open tooltips
+			function shareGoogleplus ( msg, img ) {
+				var popWidth = 550,
+					popHeight = 450,
+					winHeight = $(window).height(),
+					winWidth = $(window).width(),
+					leftPos = Math.round( ( winWidth / 2 ) - ( popWidth / 2 ) ),
+					topPos = 0,
+					elem;
 
-			// Click anywhere on the page
-			if ( action !== 'none') {
-				$( 'html, body' ).on( 'click', closeAllOpen );
-			}	
+				if ( winHeight > popHeight ) {
+					topPos = Math.round( ( winHeight / 2 ) - ( popHeight / 2 ) );
+				}
 
-			// Resize window
-			$( window ).on( 'throttledresize', changePosition );
+				var url = 'https://plus.google.com/share?url=' + options.url;
+				window.gplus = window.gplus || {};
+				window.gplus.shareWin = window.open( url, '', 'left=' + leftPos + ',top=' + topPos + ',width=' + popWidth + ',height=' + popHeight + ',personalbar=0,toolbar=0,scrollbars=1,resizable=1');
+			}
+
+			function sharePinterest ( msg, img ) {
+					var popWidth = 550,
+					popHeight = 450,
+					winHeight = $(window).height(),
+					winWidth = $(window).width(),
+					leftPos = Math.round( ( winWidth / 2 ) - ( popWidth / 2 ) ),
+					topPos = 0,
+					elem;
+
+				if ( winHeight > popHeight ) {
+					topPos = Math.round( ( winHeight / 2 ) - ( popHeight / 2 ) );
+				}
+
+				var url = '//www.pinterest.com/pin/create/button/?url=' + options.url;
+				window.pinterest = window.pinterest || {};
+				window.pinterest.shareWin = window.open( url, '', 'left=' + leftPos + ',top=' + topPos + ',width=' + popWidth + ',height=' + popHeight + ',personalbar=0,toolbar=0,scrollbars=1,resizable=1');
+			}
+
+			function shareEmail ( msg, img ) {
+				window.location.href = 'mailto:?body=' + options.url;
+			}
 
 		});
-
-		function toggleSwitch ( e ) {
-			var	tgt = $( e.target );
-
-			e.preventDefault();
-			e.stopPropagation();
-
-			if ( !tgt.hasClass('tt-open') ) {
-				toggleOn( tgt );
-			} else {
-				toggleOff( tgt );
-			}
-		}
-
-		function toggleOn ( el ) {
-			var	tgt = el,
-				ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ),
-				currentTT = $( '#tt-' + ttNum );
-
-			closeAllOpen( el );
-			setPosition( tgt, currentTT );
-			currentTT.css( 'display', 'block' );
-			tgt.addClass('tt-open');
-		}
-
-		function toggleOff ( el ) {
-			var	tgt = el,
-				ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ) ,
-				currentTT = $( '#tt-' + ttNum );
-
-			setPosition( tgt, currentTT );
-			currentTT.css('display', 'none');
-			tgt.removeClass('tt-open');
-		}
-
-		function closeAllOpen ( el ) {
-
-			if ( !el ) {
-				return;
-			}
-
-			$('.' + ttClassSelector )
-				.filter(':visible')
-				.css('display', 'none');
-		}
-
-		// Test for touch screen functionality 
-		function isTouch () {
-			if ( ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch ) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		function setPosition ( tgt, currentTT ) {
-			var posX = 0,
-				posY = 0,
-				scrollTop = $( window ).scrollTop(),
-				windowWidth = $( window ).width(),
-				windowHeight = $( window ).height(),
-				ttClass = options.ttClass || currentTT.attr( 'data-ttclass' ),
-				offsetFromTarget = options.offsetFromTarget || parseInt( currentTT.attr( 'data-offset' ) ),
-				preferredPosition = options.preferredPosition || currentTT.attr(   'data-position' );
-
-			// Width and height of the target element
-			var targetWidth = tgt.outerWidth(),
-				targetHeight = tgt.outerHeight();
-
-			// X and Y position of the target element
-			var targetX = tgt.offset().left,
-				targetY = tgt.offset().top;
-
-			// Width and height of the tooltip with content
-			var contentWidth = currentTT.outerWidth(),
-				contentHeight = currentTT.outerHeight();
-			
-			// Manage tooltip position based on available space
-			// I've created a monster.
-			// Essentially, the operations are simple. Check whether there's enough 
-			// space for the tooltip in it's preferred position, if not, position it elsewhere.
-			switch ( preferredPosition ) {
-
-				case 'top-left' :
-					if ( checkFitsTop() ) {
-						if ( checkFitsLeft() ) {
-							positionTopLeft();
-						} else {
-							positionTopMiddle();
-						}
-					} else {
-						if ( checkFitsLeft() ) {
-							positionBottomLeft();
-						} else {
-							positionBottomMiddle();
-						}
-						
-					}
-					break;
-
-				case 'top-middle' :
-					if ( checkFitsTop() ) {
-						positionTopMiddle();
-					} else {
-						positionBottomMiddle();
-					}
-					break;
-
-				case 'top-right' :
-					if ( checkFitsTop() ) {
-						if ( checkFitsRight() ) {
-							positionTopRight();
-						} else {
-							positionTopMiddle();
-						}
-					} else {
-						if ( checkFitsRight() ) {
-							positionBottomRight()
-						} else {
-							positionBottomMiddle();
-						}
-					}
-					break;
-
-				case 'middle-left' :
-					if ( checkFitsLeft() ) {
-						positionMiddleLeft();
-					} else {
-						if ( checkFitsTop() ) {
-							positionTopMiddle();
-						} else {
-							positionBottomMiddle();
-						}
-					}
-					break;
-
-				case 'middle-right' :
-					if ( checkFitsRight() ) {
-						positionMiddleRight();
-					} else {
-						if ( checkFitsTop() ) {
-							positionTopMiddle();
-						} else {
-							positionBottomMiddle();
-						}
-					}
-					break;
-
-				case 'bottom-left' :
-					if ( checkFitsBottom() ) {
-						if ( checkFitsLeft() ) {
-							positionBottomLeft();
-						} else {
-							positionBottomMiddle();
-						}
-					} else {
-						if ( checkFitsLeft() ) {
-							positionTopLeft();
-						} else {
-							positionTopMiddle();
-						}
-					}
-					break;
-
-				case 'bottom-middle' :
-					if ( checkFitsBottom() ) {
-						positionBottomMiddle();
-					} else {
-						positionTopMiddle();
-					}
-					break;
-
-				case 'bottom-right' :
-					if ( checkFitsBottom() ) {
-						if ( checkFitsRight() ) {
-							positionBottomRight();
-						} else {
-							positionBottomMiddle();
-						}
-					} else {
-						if ( checkFitsRight() ) {
-							positionTopRight();
-						} else {
-							positionTopMiddle();
-						}
-					}
-					break;
-			}
-
-			function positionTopLeft() {
-				posX = targetX - contentWidth / 2;
-				posY = targetY - contentHeight - offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + ' tip-top-left' );
-			}
-
-			function positionTopMiddle() {
-				posX = targetX + targetWidth / 2 - contentWidth / 2;
-				posY = targetY - contentHeight - offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + ' tip-top-middle' );
-			}
-
-			function positionTopRight() {
-				posX = targetX + targetWidth - contentWidth / 2;
-				posY = targetY - contentHeight - offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + ' tip-top-right' );
-			}
-
-			function positionMiddleLeft() {
-				posX = targetX - contentWidth - offsetFromTarget;
-				posY = targetY - contentHeight / 2 + targetHeight / 2;
-				currentTT.removeClass().addClass( ttClass + ' tip-middle-left' );
-			}
-
-			function positionMiddleRight() {
-				posX = targetX + targetWidth + offsetFromTarget;
-				posY = targetY - contentHeight / 2 + targetHeight / 2;
-				currentTT.removeClass().addClass( ttClass + ' tip-middle-right' );
-			}
-
-			function positionBottomLeft() {
-				posX = targetX - contentWidth / 2;
-				posY = targetY + targetHeight + offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + ' tip-bottom-left' );
-			}
-
-			function positionBottomMiddle() {
-				posX = targetX + targetWidth / 2 - contentWidth / 2;
-				posY = targetY + targetHeight + offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + ' tip-bottom-middle' );
-			}
-
-			function positionBottomRight() {
-				posX = targetX + targetWidth - contentWidth / 2;
-				posY = targetY + targetHeight + offsetFromTarget;
-				currentTT.removeClass().addClass( ttClass + 'tip-bottom-right' );
-			}
-
-			function checkFitsTop() {
-				if ( scrollTop > targetY - contentHeight - offsetFromTarget ) {
-					return false;
-				} else {
-					return true;
-				}
-			}
-
-			function checkFitsBottom() {
-				if ( scrollTop + windowHeight < targetY + targetHeight + contentHeight + offsetFromTarget ) {
-					return false;
-				} else {
-					return true;
-				}
-			}
-			
-			function checkFitsLeft() {
-				if ( targetX - ( contentWidth / 2 ) < 0 ) {
-					return false;
-				} else {
-					return true;
-				}
-			}
-
-			function checkFitsRight() {
-				if ( targetX + targetWidth + contentWidth + offsetFromTarget > windowWidth ) {
-					return false;
-				}  else {
-					return true;
-				}
-			}
-
-			currentTT.css({
-				'left' : posX,
-				'top' : posY
-			});
-		
-		}
-
-		function changePosition () {
-			var openTooltips = $( '.tt-open' );
-
-			openTooltips.each( function() {
-				var	tgt = $( this ),
-					ttNum = tgt.closest( '*[data-ti]' ).attr( 'data-ti' ),
-					currentTT = $( '#tt-' + ttNum );
-
-				setPosition( tgt, currentTT );
-			});
-		}
-
 	};
-})( jQuery, window );
+
+})( jQuery );
